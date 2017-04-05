@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var person1 = {
+            name: "LEE",
+            age: 20
+        };
+
+        console.log("name" in person1);
+        console.log("age" in person1);
+        console.log("title" in person1);
+
+        //객체에 특정 프로퍼티가 있는지 확인할 때는 in 연산자를 사용하는 것이 좋다. 이 방식은 프로퍼티의 값을 확인하지 않는다. 값을 확인하다가 성능이나 에러가 발생할 수도 있다.
+
+
+        //하지만 in은 고유 프로퍼티와 프로토타입 프로퍼티 둘 다 찾기 때문에 고유 프로퍼티인지 확인 하고 싶다면 모든 객체에 포함되어 있는 hasOwnProperty() 메소드를 이용한다.
+        // 주어진 프로퍼티가 객체에 존재하는 동시에 고유 프로퍼티일 때만 true를 반환한다.
+
+        console.log("name" in person1);
+        console.log(person1.hasOwnProperty('name'));
+
+        console.log("toString" in person1);
+        console.log(person1.hasOwnProperty("toString"));
+    </script>
+</body>
+</html>

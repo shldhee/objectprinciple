@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function sayNameForAll(label, sc) {
+            console.log(label + ":" + this.name + sc);
+        }
+
+        var person1 = {
+            name: "Nicholas"
+        };
+
+        var person2 = {
+            name: "Greg"
+        };
+
+        var name = "Michael";
+
+        sayNameForAll.apply(this, ["global"]);
+        sayNameForAll.apply(person1, ["person1"]);
+        sayNameForAll.apply(person2, ["person2","test"]);
+
+        //call과 apply 차이점은 2번째 인수
+        //call은 2번째 ,3번째 계속 입력, apply은 배열 및 유사배열 형태로 입력
+    </script>
+</body>
+</html>

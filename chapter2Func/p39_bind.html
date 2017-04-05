@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function sayNameForAll(label,a) {
+            console.log(label + ":" + this.name);
+        }
+
+        var person1 = {
+            name: "Nicholas"
+        };
+
+        var person2 = {
+            name: "Greg"
+        };
+
+        var sayNameForPerson1 = sayNameForAll.bind(person1); //고정인수 할당 안함
+        sayNameForPerson1("person1"); //함수 호출시 인수 할당
+        var sayNameForPerson2 = sayNameForAll.bind(person2,"person2"); //고정인수 할당
+        sayNameForPerson2(); //함수 호출
+
+        person2.sayName = sayNameForPerson1; // sayNameForPerson1 this 값 person1로 할당
+        person2.sayName("person2"); //
+
+        //bind 메소드는 첫번째에 this를 사용될 값, 2번째는 고정 인수
+
+    </script>
+</body>
+</html>

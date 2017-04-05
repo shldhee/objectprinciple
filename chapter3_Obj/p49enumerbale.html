@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var abc = {
+            name: "메롱"
+        };
+
+        for (property in abc) {
+            console.log("이름: " + property);
+            console.log("값: " + abc[property]);
+        }
+
+        var properties = Object.keys(abc);
+
+        var i, len;
+
+        for (i = 0, len=properties.length; i < len; i++) {
+            console.log("Name: " + properties[i]);
+            console.log("Value: " + abc[properties[i]]);
+        }
+
+
+        //Object.keys() 객체 프로퍼티의 목록을 가져올 수 있다. 일반적으로 프로퍼티 이름 목록을 배열 형태로 다루고 싶을때 사용하고 배열이 필요 없을때는 for-in을 사용한다. 고유프로퍼티만 반환
+    </script>
+</body>
+</html>
