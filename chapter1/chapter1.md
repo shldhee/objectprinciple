@@ -344,3 +344,121 @@ console.log(reflect instanceof Object); // true
 ````
 
 _**각 참조 타입은 모든 참조 타입이 상속한 Object의 인스턴스로 확인되었다.**_
+
+---
+#### 배열확인
+
+**모름**
+*자바스크립트는 같은 웹 페이지 안에 있는 프레임끼리 서로 값을 주고 받을 수 있다. 프레임의 웹 페이지는 각자 고유한 전역 컨텍스트를 가지고 있다. 즉 Object, Array 등을 포함해 각자 고유한 내장 타입을 가지고 있다는 뜻이다.
+따라서 다른 프레임에서 전달된 배열은 해당 프레임에서 정의된 Array의 인스턴스이므로 전달받은 배열에 instanceof를 사용하면 의도하지 않은 결과가 나타난다.*
+
+````
+console.log((typeof [])); // object
+````
+
+위와 같은 문제를 해결하기 위해서 ECMAScript 5에는 배열 값이 어디에서 왔든 Array의 인스턴스인지 정확히 확인할 수 있는 **Array.isArray()** 메소드가 추가되었다.
+
+````
+if(typeof Array.isArray === 'undefined') {
+    Array.isArray = function (arg) {
+        return Object.prototype.toString.call(args) === '[Object Array]';
+    }
+}
+
+Array.isArray([]); //true
+````
+
+#### 원시 래퍼 타입
+원시 래퍼 타입은 세 종류가 있는데 **String, Number, Boolean** 이들은 마치 객체를 다루듯 원시 값을 쉽게 사용할 수 있도록 지원하기 위해 만들어졌다.
+원시 래퍼 타입은 문자열, 숫자, 불리언 값을 읽을 때 언어 내부에서 자동으로 만들어 진다.
+
+다음 코드의 첫 번째 줄은 원시 문자열 값을 name 변수에 할당한다.
+두번 째 줄은 name을 마치 객체처럼 다뤄서 점 표기법을 사용해 charAt(0)메소드를 호출했다.
+
+```
+var name = "LEE";
+var firstChar = name.charAt(0);
+console.log(firstChar);
+```
+
+위 코드는 아래와 같다.
+```
+var name = "LEE";
+var temp = new String(name);
+var firstChar = temp.charAt(0);
+temp = null;
+console.log(firstChar);  // "L"
+```
+
+2번째 줄에서 원시 문자열을 객체로 취급했기 때문에 자바스크립트 엔진은 charAt(0) 코드가 정상적으로 동작하도록 String의 인스턴스를 만든다.
+
+이렇게 작성한 String 객체는 한 문장만 실행하고 곧 다시 파괴도는데 이 과정을 가리켜 **오토박싱(autoboxing)** 이라 한다.
+
+일반적인 객체를 다루듯 문자열에 프로퍼티를 추가해보면 이를 확인할 수 있다.
+
+```
+var name = "LEE";
+name.last = "DUCKHEE";
+
+console.log(name.last); // undefined
+```
+
+name문자열에 last라는 프로퍼티를 추가하려고 시도 한다. 결과는 프로퍼티가 사라진다.
+평범한 객체를 다룰때는 언제나 추가가 가능하고 일부러 제거해야 삭제가 되었다.
+원시 값에 프로퍼티를 추가하려고 하면 원시 래퍼 타입이 임시로 만들어지고 이 객체에 프로퍼티가 추가된다. *하지만 임시로 만들어진 원시 래퍼 타입은 곧 파괴되어 마치 프로퍼티가 사라진 것처럼 보인다.*
+
+위의 코드는 다음과 같다
+```
+// 실제 자바스크립트 엔진이 하는 일
+var name = "LEE";
+var temp = new String(name);
+temp.last = "DUCKHEE";
+temp = null; // 임시 객체 파괴
+
+var temp = new String(name);
+console.log(temp.last);
+temp = null;
+```
+
+위에서 보듯 새로 추가한 프로퍼티는 문자열이 아니라 임시로 만들어졌다가 파괴되는 객체에 추가된다.
+추가한 프로퍼티는 접근할 때 내부적으로 새로운 객체가 만들어지므로 앞서 추가했던 프로퍼티는 존재하지 않게 된다.
+원시 값에 대한 참조 값이 자동으로 만들어짐에도 불구하고 원시 값에 instancof를 사용해 확인하면 결과는 false가 된다.
+
+```
+var name = "LEE";
+var count = 10;
+var found = false;
+
+console.log(name instanceof String); // false
+console.log(count instanceof Number); // false
+console.log(found instanceof Boolean); // false
+```
+임시 객체는 값을 읽을 때만 만들어지기 때문에 instanceof 연산자는 false를 반환
+(instanceof 연산자가 실제로는 아무런 값도 읽지 않기 때문에 임시 객체도 만들어지지 않고 따라서 원시 값은 원시 래퍼 타입의 인스턴스가 아니라는 결과가 반환)
+
+원시 래퍼 타입을 명시적으로 사용해 값을 생성하는 방법도 있지만 이때는 다른 문제가 있다.
+```
+var name = new String("LEE");
+var count = new Number(2);
+var found = new Boolean(false);
+
+console.log(typeof name); // "object" "string"?
+console.log(typeof count); // "object"
+console.log(typeof found); // "object"
+```
+
+보다시피 원시 래퍼 타입의 인스턴스를 만들면 객체가 만들어지기 때문에 typeof연산자를 사용한 결과는 의도한 것돠 다르게 나온다.
+
+```
+var found = new Boolean(false);
+
+if(found) {
+    console.log("정답"); // 이 줄 실행
+}
+```
+
+조건문에서 **객체**는 항상 true처럼 인식된다.
+객체가 false를 표현하고 있는지 그렇지 않은지는 중요하지 않다.
+_**이 값 객체가 true처럼 사용될 뿐이다.**_
+
+_원시 값 대신 원시 래퍼 타입을 사용한다면 십중팔구 에러를 만나게 되므로 특별한 일이 아니면 사용하지 말자._
