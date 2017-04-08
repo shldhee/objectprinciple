@@ -251,3 +251,90 @@ console.log(reflect.length) // 0
  *타입까지 확인하고 싶다면 typeof 연산자와 instanceof 연산자를 사용하면 된다.*
 
  > 실제로는 이름있는 인수가 undedfined인지 확인하는 방법이 arguments.length보다 더 많이 사용된다. ( message === undedfined )
+
+
+---
+#### 객체 메소드
+객체의 프로퍼티는 언제든 추가하거나 제거할 수 있다.
+프로퍼티의 값이 함수라면 해당 프로퍼티는 **메소드**라고 볼 수 있다.
+객체에 프로퍼티를 추가하듯 같은 방식으로 메소드도 추가 할 수 있다.
+아래 코드에서 person 변수에는 name이라는 속성과 sayName이라는 메소드가 있는 객체 리터럴이 할당되어 있다.
+
+```
+var person = {
+	name: "LEE",
+	sayName: function() {
+		console.log(person.name);
+	}
+};
+
+person.sayName(); // "LEE" 출력
+```
+
+데이터 프로퍼티의 문법과 메소드의 문법은 이름 뒤에 클론과 값을 쓰는 부분이 완전히 똑같다.
+단지 sayName 메소드에서는 값이 함수 일 뿐이다.
+정의 후에는 person.sayName("LEE")처럼 객체에서 메소드를 바로 호출할 수 있다.
+
+---
+#### this객체
+위에 코드 sayName() 메소드는 person.name을 직접 참고하고 있어 객체와 메소드 간에 강한 결합(tight coupling)이 만들어졌는데, 이는 문제의 소지가 많다.
+1. 변수 이름을 바꿀 때는 반드시 메소드 안제 있는 참조 코드도 바꿔줘야 한다.
+2. 이런 식으로 강한 결합이 이루어지면 같은 함수를 여러 객체에 사용하기 어렵다.
+*다행이 자바스크립트에서 해결할 수 있는 방법이 있다.*
+
+자바스크립트의 모든 스코프에는 함수를 호출하는 객체를 뜻하는 ***this*** 객체가 있다.
+전역 스코프에선 this는 전역 객체(웹 브라우저에서는 window)을 참조한다.
+객체에 붙어있는 함수(메소드)를 호출하면 this의 값은 해당 객체가 된다.
+***메소드 안에서라면 객체를 직접 참조하는 대신 this를 참조할 수 있다.***
+
+````
+var person = {
+	name: "LEE",
+	sayName: fucnction() {
+		console.log(this.name);
+	}
+};
+
+person.sayName(); // "LEE 출력
+````
+
+sayName() 에서 person 대신 this를 참조했다.
+이젠 변수의 이름도 쉽게 바꿀 수 있으며 sayName 함수를 다른 객체에 재사용하기도 쉬워졌다.
+
+```
+function sayNameForAll() {
+	console.log(this.name);
+}
+
+var person1 = {
+	name: "LEE",
+	sayName: sayNameForAll
+};
+
+var person2 = {
+	name: "KIM",
+	sayName: sayNameForAll
+};
+
+var name = "Oh";
+
+person1.sayName(); // "LEE"
+person2.sayName(); // "KIM"
+
+sayNameForAll(); // "Oh"
+```
+
+1. sayName 함수 먼저 정의
+2. 두 객체 리터럴을 만들면서 sayName에 sayNameForAll 함수를 할당
+3. 함수는 참조 값이므로 객체가 몇개든 상관없이 객체의 속성으로 함수를 할당할 수 있다.
+4. person1 객체에서 sayName()함수를 호출 할때는 "LEE", person2 객체에선 "KIM" 이는 **함수가 호출 될때 this가 설정되고 그 후 this.name의 값을 가져왔기 때문이다.**
+
+마지박 부분에서는 name이라는 전역 변수를 정의했다.
+전역 변수는 전역 객체의 속성이나 마찬가지이므로 sayNameForAll() 함수를 바로 호출하면 전역 변수 name의 값을 가져오는 것이다.
+
+#### this값 변경
+
+자바스크립트 객체지향 프로그래밍을 잘 할려면 함수의 this 값을 잘 다루고 사용할 수 있어야 한다. 일반적으로 this의 값은 자동으로 할당되지만 목적에 따라 바꿀 수도 있다.
+자바스크립트에서 this의 값을 바꿀 때 사용할 수 있는 메소드는 세 종류가 있다.
+
+##### call() 메소드
