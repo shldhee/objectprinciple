@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script type="text/javascript">
+  var Person = (function(){
+
+    // everyone shares the same age
+    var age = 25;
+
+    function InnerPerson(name) {
+      this.name = name;
+    }
+
+    InnerPerson.prototype.getAge = function() {
+      return age;
+    };
+
+    InnerPerson.prototype.growOlder = function() {
+      age++;
+    }
+
+    return InnerPerson;
+
+  }());
+  var person1 = new Person("LEE");
+  var person2 = new Person("OH");
+
+  console.log(person1.name); // "LEE"
+  console.log(person1.getAge()); // 25
+
+  console.log(person2.name); // "OH"
+  console.log(person1.getAge()); // 25
+
+  person1.growOlder();
+  console.log(person1.getAge()); // 26
+  console.log(person2.getAge()); // 26
+  person2.growOlder();
+  console.log(person1.getAge()); // 26
+  console.log(person2.getAge()); // 26
+  </script>
+</body>
+</html>
